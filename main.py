@@ -67,6 +67,15 @@ tabela_numeros = {
     "50": {"base_chance": 0.10, "dependencias": {}}
 }
 
+# Probabilidades para número de listas geradas (1 a 5)
+distribuicao_listas = {
+    1: 0.50,
+    2: 0.20,
+    3: 0.15,
+    4: 0.10,
+    5: 0.05
+}
+
 
 # ---- Funções auxiliares ----
 def get_chance_por_hora(hora):
@@ -106,6 +115,8 @@ def gerar_numeros_dinamicos():
 def gerar_dados_simulados():
     hora_simulada = datetime.strptime("08:00", "%H:%M")
     passos_totais = 48  # 48 passos = 8h úteis (10min cada)
+    opcoes = list(distribuicao_listas.keys())
+    pesos = list(distribuicao_listas.values())
 
     try:
         for _ in range(passos_totais):
@@ -113,7 +124,7 @@ def gerar_dados_simulados():
             chance_hora = get_chance_por_hora(hora_simulada.time())
 
             if random.random() < chance_hora:
-                qtd_listas = random.randint(1, 5)
+                qtd_listas = random.choices(opcoes, weights=pesos, k=1)[0]
                 listas = [gerar_numeros_dinamicos() for _ in range(qtd_listas)]
                 listas_formatadas = ", ".join(str(lst) for lst in listas)
                 print(f"[{hora_label}] ({chance_hora*100:.0f}%): {listas_formatadas}")
