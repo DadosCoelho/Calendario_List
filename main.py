@@ -67,9 +67,9 @@ tabela_numeros = {
     "50": {"base_chance": 0.10, "dependencias": {}}
 }
 
+
 # ---- Funções auxiliares ----
 def get_chance_por_hora(hora):
-    """Retorna a chance de gerar dado com base no horário."""
     for faixa, chance in horarios_pick.items():
         inicio, fim = faixa.split('-')
         hora_inicio = datetime.strptime(inicio, "%H:%M").time()
@@ -78,8 +78,8 @@ def get_chance_por_hora(hora):
             return chance
     return 0.0
 
+
 def gerar_numeros_dinamicos():
-    """Gera de 1 a 5 números considerando as chances base e dependências com sobreposição."""
     numeros_disponiveis = list(tabela_numeros.keys())
     chances = {n: tabela_numeros[n]["base_chance"] for n in numeros_disponiveis}
 
@@ -89,41 +89,41 @@ def gerar_numeros_dinamicos():
     for _ in range(qtd):
         total = sum(chances.values())
         if total == 0:
-            break  # evita divisão por zero
+            break
         pesos_norm = [chances[n] / total for n in numeros_disponiveis]
         escolhido = random.choices(numeros_disponiveis, weights=pesos_norm, k=1)[0]
         resultado.append(int(escolhido))
         numeros_disponiveis.remove(escolhido)
         chances.pop(escolhido)
 
-        # Aplica dependências — sobrepõe o valor anterior
-        deps = tabela_numeros[escolhido]["dependencias"]
-        for num, novo_valor in deps.items():
+        for num, novo_valor in tabela_numeros[escolhido]["dependencias"].items():
             if num in chances:
-                chances[num] = novo_valor  # <<< substitui o valor base pela dependência
+                chances[num] = novo_valor
 
     return sorted(resultado)
 
 
-# ---- Simulação principal ----
 def gerar_dados_simulados():
     hora_simulada = datetime.strptime("08:00", "%H:%M")
-    passos_totais = 48  # 48 passos = 8h úteis
+    passos_totais = 48  # 48 passos = 8h úteis (10min cada)
+
     try:
-        for passo in range(1, passos_totais + 1):
+        for _ in range(passos_totais):
             hora_label = hora_simulada.strftime("%H:%M")
             chance_hora = get_chance_por_hora(hora_simulada.time())
 
             if random.random() < chance_hora:
-                numeros = gerar_numeros_dinamicos()
-                print(f"[{hora_label}] ({chance_hora*100:.0f}%) Segundo {passo:02d}: {numeros}")
+                qtd_listas = random.randint(1, 5)
+                listas = [gerar_numeros_dinamicos() for _ in range(qtd_listas)]
+                listas_formatadas = ", ".join(str(lst) for lst in listas)
+                print(f"[{hora_label}] ({chance_hora*100:.0f}%): {listas_formatadas}")
             else:
-                print(f"[{hora_label}] ({chance_hora*100:.0f}%) Segundo {passo:02d}: (sem dado gerado)")
+                print(f"[{hora_label}] ({chance_hora*100:.0f}%) → Nenhum dado gerado")
 
             hora_simulada += timedelta(minutes=10)
             if hora_simulada.hour == 12 and hora_simulada.minute == 0:
                 hora_simulada = hora_simulada.replace(hour=14, minute=0)
-            
+
             time.sleep(1)
 
         print("\nSimulação encerrada — Dia comercial completo (08:00 → 17:50).")
@@ -131,6 +131,6 @@ def gerar_dados_simulados():
     except KeyboardInterrupt:
         print("\nSimulação interrompida pelo usuário.")
 
-# ---- Execução ----
+
 if __name__ == "__main__":
     gerar_dados_simulados()
