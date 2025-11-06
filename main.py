@@ -88,12 +88,19 @@ def get_chance_por_hora(hora):
     return 0.0
 
 
+def sortear_quantidade(probabilidades):
+    """Sorteia uma quantidade (1 a 5) com base na distribuição fornecida."""
+    opcoes = list(probabilidades.keys())
+    pesos = list(probabilidades.values())
+    return random.choices(opcoes, weights=pesos, k=1)[0]
+
+
 def gerar_numeros_dinamicos():
     numeros_disponiveis = list(tabela_numeros.keys())
     chances = {n: tabela_numeros[n]["base_chance"] for n in numeros_disponiveis}
 
     resultado = []
-    qtd = random.randint(1, 5)
+    qtd = sortear_quantidade(distribuicao_listas)  # <- mesma distribuição das listas
 
     for _ in range(qtd):
         total = sum(chances.values())
@@ -105,6 +112,7 @@ def gerar_numeros_dinamicos():
         numeros_disponiveis.remove(escolhido)
         chances.pop(escolhido)
 
+        # Ajusta dependências dinâmicas
         for num, novo_valor in tabela_numeros[escolhido]["dependencias"].items():
             if num in chances:
                 chances[num] = novo_valor
@@ -129,7 +137,7 @@ def gerar_dados_simulados():
                 listas_formatadas = ", ".join(str(lst) for lst in listas)
                 print(f"[{hora_label}] ({chance_hora*100:.0f}%): {listas_formatadas}")
             else:
-                print(f"[{hora_label}] ({chance_hora*100:.0f}%) → Nenhum dado gerado")
+                print(f"[{hora_label}] ({chance_hora*100:.0f}%): Nenhum dado gerado")
 
             hora_simulada += timedelta(minutes=10)
             if hora_simulada.hour == 12 and hora_simulada.minute == 0:
