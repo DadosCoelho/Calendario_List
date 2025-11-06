@@ -8,14 +8,14 @@ horarios_pick = {
     "08:00-09:00": 0.20,
     "09:00-11:00": 0.35,
     "11:00-12:00": 0.25,
-    "14:00-15:00": 0.30,
-    "15:00-17:00": 0.45,
-    "17:00-18:00": 0.25
+    "14:00-15:00": 0.50,
+    "15:00-17:00": 0.85,
+    "17:00-18:00": 0.65
 }
 
 # tabela simplificada de probabilidades base por número
 tabela_numeros = {
-    "1": {"base_chance": 0.30, "dependencias": {"2": 0.80}},
+    "1": {"base_chance": 10.00, "dependencias": {"2": 10.00}},
     "2": {"base_chance": 0.25, "dependencias": {}},
     "3": {"base_chance": 0.20, "dependencias": {"4": 0.80}},
     "4": {"base_chance": 0.15, "dependencias": {}},
@@ -79,7 +79,7 @@ def get_chance_por_hora(hora):
     return 0.0
 
 def gerar_numeros_dinamicos():
-    """Gera de 1 a 5 números considerando as chances base e dependências."""
+    """Gera de 1 a 5 números considerando as chances base e dependências com sobreposição."""
     numeros_disponiveis = list(tabela_numeros.keys())
     chances = {n: tabela_numeros[n]["base_chance"] for n in numeros_disponiveis}
 
@@ -88,19 +88,22 @@ def gerar_numeros_dinamicos():
 
     for _ in range(qtd):
         total = sum(chances.values())
+        if total == 0:
+            break  # evita divisão por zero
         pesos_norm = [chances[n] / total for n in numeros_disponiveis]
         escolhido = random.choices(numeros_disponiveis, weights=pesos_norm, k=1)[0]
         resultado.append(int(escolhido))
         numeros_disponiveis.remove(escolhido)
         chances.pop(escolhido)
 
-        # Aplica dependências (ex: se 1 foi escolhido, aumenta chance do 2)
+        # Aplica dependências — sobrepõe o valor anterior
         deps = tabela_numeros[escolhido]["dependencias"]
-        for num, fator in deps.items():
+        for num, novo_valor in deps.items():
             if num in chances:
-                chances[num] *= (1 + fator)
+                chances[num] = novo_valor  # <<< substitui o valor base pela dependência
 
     return sorted(resultado)
+
 
 # ---- Simulação principal ----
 def gerar_dados_simulados():
