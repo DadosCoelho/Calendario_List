@@ -41,9 +41,9 @@ def gerar_numeros_dinamicos(mes_atual, tabela_numeros):
         base = tabela_numeros[n]["base_chance"]
         mult = 1.0
         if mes_atual in class_estacao.get(tabela_numeros[n]["classEstacao"], {}).get("meses", []):
-            mult *= 2.5
+            mult *= 3.5
         if mes_atual in class_evento.get(tabela_numeros[n]["classEvento"], {}).get("meses", []):
-            mult *= 2.5
+            mult *= 3.5
         chances[n] = base * mult
 
     resultado = []
@@ -115,13 +115,54 @@ def gerar_relatorio(sorteios_mensais, tabela_numeros):
     for mes, contador in sorted(sorteios_mensais.items()):
         total_mes = sum(contador.values())
         print(f"\n🗓️  MÊS {mes:02d} — Total de números sorteados: {total_mes}")
+
         mais_frequentes = contador.most_common(10)
 
         for i, (num, freq) in enumerate(mais_frequentes, start=1):
-            base_chance = tabela_numeros[str(num)]["base_chance"]
-            perc = (freq / total_mes * 100) if total_mes else 0
-            print(f" {i:02d}º → Número {num:02d}: {freq:5d} vezes ({perc:5.2f}%) | Chance base: {base_chance:5.2f}")
+            num_str = str(num)
+            info = tabela_numeros[num_str]
+            base = info["base_chance"]
 
+            # ---- Cálculo de multiplicadores ----
+            mult = 1.0
+            desc_estacao = class_estacao.get(info["classEstacao"], {}).get("descricao", "N/A")
+            desc_evento = class_evento.get(info["classEvento"], {}).get("descricao", "Nenhum")
+
+            # multiplicador por estação
+            if mes in class_estacao.get(info["classEstacao"], {}).get("meses", []):
+                mult *= 3.5
+            # multiplicador por evento
+            if mes in class_evento.get(info["classEvento"], {}).get("meses", []):
+                mult *= 3.5
+
+            chance_calculada = base * mult
+
+            perc = (freq / total_mes * 100) if total_mes else 0
+
+            perc_s = f"{perc:5.2f}".replace(".", ",")
+            ip, dp = perc_s.split(",")
+            ip = ip.rjust(2, " ")
+            perc_s = f"{ip},{dp}%"
+
+            base_s = f"{base:.2f}".replace(".", ",")
+            ip, dp = base_s.split(",")
+            ip = ip.rjust(2, " ")
+            base_s = f"{ip},{dp}"
+
+            chance_s = f"{chance_calculada:5.2f}".replace(".", ",")
+            ip, dp = chance_s.split(",")
+            chance_s = f"{ip.rjust(2, ' ')},{dp}"
+
+            mult_s = f"{mult:,.2f}"
+            mult_s = mult_s.replace(",", "X").replace(".", ",").replace("X", ".")
+            mult_s = mult_s.rjust(6, " ")
+
+            print(
+                f"{i:02d}º → Número {num:2d}: {freq:5d} vezes "
+                f"({perc_s}) | Base: {base_s} | "
+                f"Mult. Est/Evento: x{mult_s} → Chance final: {chance_s}  | "
+                f"Estação: {desc_estacao}, Evento: {desc_evento}"
+            )
 
 # ---- Execução ----
 if __name__ == "__main__":

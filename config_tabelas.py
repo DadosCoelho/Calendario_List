@@ -24,7 +24,7 @@ class_evento = {
     4: {"descricao": "Dia das Mães", "meses": [5]},
     5: {"descricao": "Festa Junina", "meses": [6]},
     6: {"descricao": "Dia dos Pais", "meses": [7]},
-    7: {"descricao": "Dia das Crianças / Nossa Senhora Aparecida", "meses": [10]},
+    7: {"descricao": "Dia das Crianças", "meses": [10]},
     8: {"descricao": "Halloween", "meses": [10]},
     9: {"descricao": "Natal", "meses": [12]},
     10: {"descricao": "Réveillon", "meses": [12]}
@@ -32,7 +32,7 @@ class_evento = {
 
 # ---- Probabilidades base ----
 tabela_numeros = {
-    "1": {"base_chance": 4.50, "dependencias":  {"2": 17.00}, "classEstacao": 1, "classEvento": 3},
+    "1": {"base_chance": 1.50, "dependencias":  {"2": 17.00}, "classEstacao": 1, "classEvento": 3},
     "2": {"base_chance": 1.50, "dependencias":  {"1": 15.00}, "classEstacao": 1, "classEvento": 3},
     "3": {"base_chance": 1.20, "dependencias":  {"4": 16.00}, "classEstacao": 1, "classEvento": 2},
     "4": {"base_chance": 1.00, "dependencias":  {"3": 14.00}, "classEstacao": 1, "classEvento": 2},
