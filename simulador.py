@@ -40,10 +40,16 @@ def gerar_numeros_dinamicos(mes_atual, tabela_numeros):
     for n in numeros_disponiveis:
         base = tabela_numeros[n]["base_chance"]
         mult = 1.0
-        if mes_atual in class_estacao.get(tabela_numeros[n]["classEstacao"], {}).get("meses", []):
-            mult *= 3.5
-        if mes_atual in class_evento.get(tabela_numeros[n]["classEvento"], {}).get("meses", []):
-            mult *= 3.5
+        # multiplicador por estação
+        estacao_info = class_estacao.get(tabela_numeros[n]["classEstacao"], {})
+        if mes_atual in estacao_info.get("meses", []):
+            mult *= estacao_info.get("mult", 1.0)
+
+        # multiplicador por evento
+        evento_info = class_evento.get(tabela_numeros[n]["classEvento"], {})
+        if mes_atual in evento_info.get("meses", []):
+            mult *= evento_info.get("mult", 1.0)
+
         chances[n] = base * mult
 
     resultado = []
@@ -129,11 +135,14 @@ def gerar_relatorio(sorteios_mensais, tabela_numeros):
             desc_evento = class_evento.get(info["classEvento"], {}).get("descricao", "Nenhum")
 
             # multiplicador por estação
-            if mes in class_estacao.get(info["classEstacao"], {}).get("meses", []):
-                mult *= 3.5
+            estacao_info = class_estacao.get(info["classEstacao"], {})
+            if mes in estacao_info.get("meses", []):
+                mult *= estacao_info.get("mult", 1.0)
+
             # multiplicador por evento
-            if mes in class_evento.get(info["classEvento"], {}).get("meses", []):
-                mult *= 3.5
+            evento_info = class_evento.get(info["classEvento"], {})
+            if mes in evento_info.get("meses", []):
+                mult *= evento_info.get("mult", 1.0)
 
             chance_calculada = base * mult
 

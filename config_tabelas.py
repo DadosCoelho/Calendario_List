@@ -10,24 +10,26 @@ horarios_pick = {
     "17:00-18:00": 0.65
 }
 
+# ---- Estações com multiplicadores ----
 class_estacao = {
-    1: {"descricao": "Verão", "meses": [1, 2, 3]},
-    2: {"descricao": "Outono", "meses": [4, 5, 6]},
-    3: {"descricao": "Inverno", "meses": [7, 8, 9]},
-    4: {"descricao": "Primavera", "meses": [10, 11, 12]}
+    1: {"descricao": "Verão", "meses": [1, 2, 3], "mult": 3.5},
+    2: {"descricao": "Outono", "meses": [4, 5, 6], "mult": 3.2},
+    3: {"descricao": "Inverno", "meses": [7, 8, 9], "mult": 3.8},
+    4: {"descricao": "Primavera", "meses": [10, 11, 12], "mult": 3.4},
 }
 
+# ---- Eventos com multiplicadores ----
 class_evento = {
-    1: {"descricao": "Férias de Verão", "meses": [1]},
-    2: {"descricao": "Carnaval", "meses": [2]},
-    3: {"descricao": "Semana Santa e Páscoa", "meses": [3]},
-    4: {"descricao": "Dia das Mães", "meses": [5]},
-    5: {"descricao": "Festa Junina", "meses": [6]},
-    6: {"descricao": "Dia dos Pais", "meses": [7]},
-    7: {"descricao": "Dia das Crianças", "meses": [10]},
-    8: {"descricao": "Halloween", "meses": [10]},
-    9: {"descricao": "Natal", "meses": [12]},
-    10: {"descricao": "Réveillon", "meses": [12]}
+    1: {"descricao": "Férias de Verão", "meses": [1], "mult": 3.5},
+    2: {"descricao": "Carnaval", "meses": [2], "mult": 3.5},
+    3: {"descricao": "Semana Santa e Páscoa", "meses": [3], "mult": 3.5},
+    4: {"descricao": "Dia das Mães", "meses": [5], "mult": 3.2},
+    5: {"descricao": "Festa Junina", "meses": [6], "mult": 3.3},
+    6: {"descricao": "Dia dos Pais", "meses": [7], "mult": 3.2},
+    7: {"descricao": "Dia das Crianças", "meses": [10], "mult": 3.5},
+    8: {"descricao": "Halloween", "meses": [10], "mult": 3.0},
+    9: {"descricao": "Natal", "meses": [12], "mult": 3.8},
+    10: {"descricao": "Réveillon", "meses": [12], "mult": 4.0},
 }
 
 # ---- Probabilidades base ----
