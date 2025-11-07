@@ -5,6 +5,8 @@ from config_tabelas import tabela_numeros
 from simulador import gerar_dados_simulados
 from relatorio_top_mensal import gerar_relatorio_top_mensal
 from relatorio_dependencias import gerar_relatorio_dependencias
+from relatorio_tamanho_listas import gerar_relatorio_tamanho_listas
+from relatorio_listas_por_intervalo import gerar_relatorio_listas_por_intervalo
 
 def menu():
     while True:
@@ -12,6 +14,8 @@ def menu():
         print("1. Gerar simulação")
         print("2. Relatório top números mensais")
         print("3. Relatório aproveitamento dependências")
+        print("4. Relatório tamanho das listas")
+        print("5. Relatório listas por intervalo")
         print("0. Sair")
         opcao = input("Escolha uma opção: ").strip()
 
@@ -31,6 +35,20 @@ def menu():
                 print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
             else:
                 gerar_relatorio_dependencias(arquivo)
+            input("\nPressione ENTER para voltar...")
+        elif opcao == "4":
+            arquivo = "dados_simulados_br.csv"
+            if not os.path.exists(arquivo):
+                print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
+            else:
+                gerar_relatorio_tamanho_listas(arquivo)
+            input("\nPressione ENTER para voltar...")
+        elif opcao == "5":
+            arquivo = "dados_simulados_br.csv"
+            if not os.path.exists(arquivo):
+                print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
+            else:
+                gerar_relatorio_listas_por_intervalo(arquivo)
             input("\nPressione ENTER para voltar...")
         elif opcao == "0":
             print("Saindo...")
