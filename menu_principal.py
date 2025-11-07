@@ -7,6 +7,7 @@ from relatorio_top_mensal import gerar_relatorio_top_mensal
 from relatorio_dependencias import gerar_relatorio_dependencias
 from relatorio_tamanho_listas import gerar_relatorio_tamanho_listas
 from relatorio_listas_por_intervalo import gerar_relatorio_listas_por_intervalo
+from relatorio_sorteios_pick import gerar_relatorio_sorteios_pick
 
 def menu():
     while True:
@@ -16,6 +17,7 @@ def menu():
         print("3. Relatório aproveitamento dependências")
         print("4. Relatório tamanho das listas")
         print("5. Relatório listas por intervalo")
+        print("6. Relatório sorteios por horário pick")
         print("0. Sair")
         opcao = input("Escolha uma opção: ").strip()
 
@@ -49,6 +51,13 @@ def menu():
                 print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
             else:
                 gerar_relatorio_listas_por_intervalo(arquivo)
+            input("\nPressione ENTER para voltar...")
+        elif opcao == "6":
+            arquivo = "dados_simulados_br.csv"
+            if not os.path.exists(arquivo):
+                print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
+            else:
+                gerar_relatorio_sorteios_pick(arquivo)
             input("\nPressione ENTER para voltar...")
         elif opcao == "0":
             print("Saindo...")
