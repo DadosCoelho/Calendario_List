@@ -9,13 +9,11 @@ from collections import Counter, defaultdict
 # importa todas as tabelas do arquivo separado
 from config_tabelas import (
     horarios_pick,
-    class_estacao,
-    class_evento,
+    class_tipo,
     tabela_numeros,
     distribuicao_listas,
     distribuicao_numeros,
 )
-
 
 # ---- Funções utilitárias ----
 def get_chance_por_hora(hora):
@@ -34,23 +32,24 @@ def sortear_quantidade(probabilidades):
 
 
 def gerar_numeros_dinamicos(mes_atual, tabela_numeros):
+    """
+    Calcula as chances com base no mês atual, combinando multiplicadores
+    de todos os 'tipos' associados ao número (estações e eventos).
+    """
     numeros_disponiveis = list(tabela_numeros.keys())
     chances = {}
 
     for n in numeros_disponiveis:
         base = tabela_numeros[n]["base_chance"]
-        mult = 1.0
-        # multiplicador por estação
-        estacao_info = class_estacao.get(tabela_numeros[n]["classEstacao"], {})
-        if mes_atual in estacao_info.get("meses", []):
-            mult *= estacao_info.get("mult", 1.0)
+        mult_total = 1.0
 
-        # multiplicador por evento
-        evento_info = class_evento.get(tabela_numeros[n]["classEvento"], {})
-        if mes_atual in evento_info.get("meses", []):
-            mult *= evento_info.get("mult", 1.0)
+        # percorre todos os tipos (estações/eventos)
+        for tipo_id in tabela_numeros[n]["tipo"]:
+            tipo_info = class_tipo.get(tipo_id, {})
+            if mes_atual in tipo_info.get("meses", []):
+                mult_total *= tipo_info.get("mult", 1.0)
 
-        chances[n] = base * mult
+        chances[n] = base * mult_total
 
     resultado = []
     qtd = sortear_quantidade(distribuicao_numeros)
@@ -59,11 +58,15 @@ def gerar_numeros_dinamicos(mes_atual, tabela_numeros):
         total = sum(chances.values())
         if total == 0:
             break
+
         pesos_norm = [chances[n] / total for n in numeros_disponiveis]
         escolhido = random.choices(numeros_disponiveis, weights=pesos_norm, k=1)[0]
         resultado.append(int(escolhido))
+
+        # Remove número escolhido e aplica dependências
         numeros_disponiveis.remove(escolhido)
         chances.pop(escolhido)
+
         for num, novo_valor in tabela_numeros[escolhido]["dependencias"].items():
             if num in chances:
                 chances[num] = novo_valor

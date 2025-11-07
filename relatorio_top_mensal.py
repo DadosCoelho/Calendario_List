@@ -2,7 +2,7 @@
 
 import csv
 from collections import Counter, defaultdict
-from config_tabelas import class_estacao, class_evento
+from config_tabelas import class_tipo  # agora usamos a tabela combinada
 
 def gerar_relatorio_top_mensal(arquivo_csv, tabela_numeros):
     sorteios_mensais = defaultdict(Counter)
@@ -36,23 +36,26 @@ def gerar_relatorio_top_mensal(arquivo_csv, tabela_numeros):
             info = tabela_numeros.get(num_str, {})
             base = info.get("base_chance", 1.0)
 
-            # ---- Cálculo de multiplicadores ----
+            # ---- Tipos atribuídos ao número (ex.: estação + evento) ----
+            tipos_ids = info.get("tipo", []) or info.get("classTipo", []) or []
+            # descrição completa dos tipos atribuídos (independente do mês)
+            if tipos_ids:
+                descricoes_tipos = [class_tipo.get(tid, {}).get("descricao", f"Tipo{tid}") for tid in tipos_ids]
+                desc_tipo = ", ".join(descricoes_tipos)
+            else:
+                desc_tipo = "N/A"
+
+            # ---- Cálculo do multiplicador somente para os tipos ATIVOS no mês ----
             mult = 1.0
-            desc_estacao = class_estacao.get(info.get("classEstacao"), {}).get("descricao", "N/A")
-            desc_evento = class_evento.get(info.get("classEvento"), {}).get("descricao", "Nenhum")
-
-            estacao_info = class_estacao.get(info.get("classEstacao"), {})
-            if mes in estacao_info.get("meses", []):
-                mult *= estacao_info.get("mult", 1.0)
-
-            evento_info = class_evento.get(info.get("classEvento"), {})
-            if mes in evento_info.get("meses", []):
-                mult *= evento_info.get("mult", 1.0)
+            for tid in tipos_ids:
+                tipo_info = class_tipo.get(tid, {})
+                if mes in tipo_info.get("meses", []):
+                    mult *= tipo_info.get("mult", 1.0)
 
             chance_calculada = base * mult
             perc = (freq / total_mes * 100) if total_mes else 0
 
-            # formatações visuais
+            # ---- Formatações visuais (pt-BR: vírgula decimal) ----
             perc_s = f"{perc:5.2f}".replace(".", ",")
             ip, dp = perc_s.split(",")
             ip = ip.rjust(2, " ")
@@ -72,6 +75,6 @@ def gerar_relatorio_top_mensal(arquivo_csv, tabela_numeros):
             print(
                 f"{i:02d}º → Número {num:2d}: {freq:5d} vezes "
                 f"({perc_s}) | Base: {base_s} | "
-                f"Mult. Est/Evento: x{mult_s} → Chance final: {chance_s}  | "
-                f"Estação: {desc_estacao}, Evento: {desc_evento}"
+                f"Multiplicador Tipo: x{mult_s} → Chance final: {chance_s}  | "
+                f"Tipo: {desc_tipo}"
             )
