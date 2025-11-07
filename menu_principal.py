@@ -1,7 +1,9 @@
+# menu_principal.py
+
 import os
 from config_tabelas import tabela_numeros
 from simulador import gerar_dados_simulados
-from relatorios import gerar_relatorio_top_mensal
+from relatorio_top_mensal import gerar_relatorio_top_mensal
 from relatorio_dependencias import gerar_relatorio_dependencias
 
 def menu():

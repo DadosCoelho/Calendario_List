@@ -1,3 +1,5 @@
+# relatorio_dependencias.py
+
 import csv
 from collections import defaultdict
 from config_tabelas import tabela_numeros
