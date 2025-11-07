@@ -1,7 +1,7 @@
 import os
 from config_tabelas import tabela_numeros
 from simulador import gerar_dados_simulados
-from relatorios import gerar_relatorio_csv
+from relatorios import gerar_relatorio_top_mensal
 from relatorio_dependencias import gerar_relatorio_dependencias
 
 def menu():
@@ -21,7 +21,7 @@ def menu():
             if not os.path.exists(arquivo):
                 print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
             else:
-                gerar_relatorio_csv(arquivo, tabela_numeros)
+                gerar_relatorio_top_mensal(arquivo, tabela_numeros)
             input("\nPressione ENTER para voltar...")
         elif opcao == "3":
             arquivo = "dados_simulados_br.csv"

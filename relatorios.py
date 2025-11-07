@@ -2,7 +2,7 @@ import csv
 from collections import Counter, defaultdict
 from config_tabelas import class_estacao, class_evento
 
-def gerar_relatorio_csv(arquivo_csv, tabela_numeros):
+def gerar_relatorio_top_mensal(arquivo_csv, tabela_numeros):
     sorteios_mensais = defaultdict(Counter)
 
     # --- Lê o CSV e monta o contador por mês ---
@@ -21,11 +21,11 @@ def gerar_relatorio_csv(arquivo_csv, tabela_numeros):
                 sorteios_mensais[mes].update(numeros)
 
     # --- Gera relatório formatado ---
-    print("\n📊 RANKING DE NÚMEROS POR MÊS\n")
+    print("\nRANKING DE NÚMEROS POR MÊS\n")
 
     for mes, contador in sorted(sorteios_mensais.items()):
         total_mes = sum(contador.values())
-        print(f"\n🗓️  MÊS {mes:02d} — Total de números sorteados: {total_mes}")
+        print(f"\nMÊS {mes:02d} — Total de números sorteados: {total_mes}")
 
         mais_frequentes = contador.most_common(10)
 
