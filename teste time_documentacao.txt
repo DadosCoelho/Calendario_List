@@ -1,0 +1,599 @@
+# Documentação do Projeto: teste time
+Gerado automaticamente pelo Gerador de Conteúdo
+Data: 12/11/2025 14:41:35
+Caminho base: C:/Users/reinaldo.coelho/Downloads/teste time
+
+============================================================
+
+### 📄 teste time/.gitignore
+```
+~$Pasta1.xlsx
+Pasta1.xlsx
+dados_simulados_br.csv
+
+```
+
+### 📄 teste time/config_tabelas.py
+```
+# config_tabelas.py
+
+# ---- Tabelas de configuração ----
+horarios_pick = {
+    "08:00-09:00": 0.20,
+    "09:00-11:00": 0.35,
+    "11:00-12:00": 0.25,
+    "14:00-15:00": 0.50,
+    "15:00-17:00": 0.85,
+    "17:00-18:00": 0.65
+}
+
+# ---- Distribuições ----
+distribuicao_listas = {1: 0.50, 2: 0.20, 3: 0.15, 4: 0.10, 5: 0.05}
+distribuicao_numeros = {1: 0.40, 2: 0.25, 3: 0.15, 4: 0.12, 5: 0.08}
+
+# ---- Tipos combinados (estações e eventos) ----
+class_tipo = {
+    # ---- ESTAÇÕES ----
+    1: {"descricao": "Verão", "tipo": "estação", "meses": [1, 2, 3], "mult": 3.5},
+    2: {"descricao": "Outono", "tipo": "estação", "meses": [4, 5, 6], "mult": 3.2},
+    3: {"descricao": "Inverno", "tipo": "estação", "meses": [7, 8, 9], "mult": 3.8},
+    4: {"descricao": "Primavera", "tipo": "estação", "meses": [10, 11, 12], "mult": 3.4},
+
+    # ---- EVENTOS ----
+    5: {"descricao": "Férias de Verão", "tipo": "evento", "meses": [1], "mult": 3.5},
+    6: {"descricao": "Carnaval", "tipo": "evento", "meses": [2], "mult": 3.5},
+    7: {"descricao": "Semana Santa e Páscoa", "tipo": "evento", "meses": [3], "mult": 3.5},
+    8: {"descricao": "Dia das Mães", "tipo": "evento", "meses": [5], "mult": 3.2},
+    9: {"descricao": "Festa Junina", "tipo": "evento", "meses": [6], "mult": 3.3},
+    10: {"descricao": "Dia dos Pais", "tipo": "evento", "meses": [7], "mult": 3.2},
+    11: {"descricao": "Dia das Crianças", "tipo": "evento", "meses": [10], "mult": 3.5},
+    12: {"descricao": "Halloween", "tipo": "evento", "meses": [10], "mult": 3.0},
+    13: {"descricao": "Natal", "tipo": "evento", "meses": [12], "mult": 3.8},
+    14: {"descricao": "Réveillon", "tipo": "evento", "meses": [12], "mult": 4.0},
+}
+
+
+# ---- Probabilidades base (com tipos combinados) ----
+tabela_numeros = {
+    "1": {"base_chance": 1.50, "dependencias": {"2": 17.00}, "tipo": [1, 5]},
+    "2": {"base_chance": 1.50, "dependencias": {"1": 15.00}, "tipo": [1, 5]},
+    "3": {"base_chance": 1.20, "dependencias": {"4": 16.00}, "tipo": [1, 6]},
+    "4": {"base_chance": 1.00, "dependencias": {"3": 14.00}, "tipo": [1, 6]},
+    "5": {"base_chance": 1.00, "dependencias": {"8": 19.00}, "tipo": [1, 7]},
+    "6": {"base_chance": 1.20, "dependencias": {"8": 18.00}, "tipo": [1, 7]},
+    "7": {"base_chance": 1.10, "dependencias": {"8": 17.00}, "tipo": [1, 7]},
+    "8": {"base_chance": 2.00, "dependencias": {"5": 14.00, "6": 14.00, "7": 14.00}, "tipo": [1, 7]},
+    "9": {"base_chance": 2.50, "dependencias": {}, "tipo": [1]},
+    "10": {"base_chance": 0.80, "dependencias": {"14": 20.00}, "tipo": [2]},
+    "11": {"base_chance": 1.20, "dependencias": {"14": 19.00}, "tipo": [2]},
+    "12": {"base_chance": 1.00, "dependencias": {"14": 18.00}, "tipo": [2]},
+    "13": {"base_chance": 0.90, "dependencias": {"14": 17.00}, "tipo": [2]},
+    "14": {"base_chance": 1.80, "dependencias": {"11": 14.00}, "tipo": [2]},
+    "15": {"base_chance": 1.30, "dependencias": {"16": 15.00}, "tipo": [2, 8]},
+    "16": {"base_chance": 1.60, "dependencias": {"15": 15.00}, "tipo": [2, 8]},
+    "17": {"base_chance": 2.20, "dependencias": {"18": 18.00}, "tipo": [2, 9]},
+    "18": {"base_chance": 2.00, "dependencias": {"17": 17.00}, "tipo": [2, 9]},
+    "19": {"base_chance": 1.20, "dependencias": {}, "tipo": [2]},
+    "20": {"base_chance": 0.80, "dependencias": {}, "tipo": [2]},
+    "21": {"base_chance": 1.00, "dependencias": {}, "tipo": [2]},
+    "22": {"base_chance": 0.90, "dependencias": {}, "tipo": [2]},
+    "23": {"base_chance": 1.30, "dependencias": {}, "tipo": [2]},
+    "24": {"base_chance": 1.00, "dependencias": {}, "tipo": [2]},
+    "25": {"base_chance": 0.90, "dependencias": {}, "tipo": [2]},
+    "26": {"base_chance": 0.80, "dependencias": {}, "tipo": [2]},
+    "27": {"base_chance": 0.80, "dependencias": {}, "tipo": [3]},
+    "28": {"base_chance": 1.60, "dependencias": {"29": 16.00}, "tipo": [3, 10]},
+    "29": {"base_chance": 2.20, "dependencias": {"28": 16.00, "30": 15.00}, "tipo": [3, 10]},
+    "30": {"base_chance": 2.40, "dependencias": {"29": 14.00}, "tipo": [3, 10]},
+    "31": {"base_chance": 0.90, "dependencias": {}, "tipo": [3]},
+    "32": {"base_chance": 0.80, "dependencias": {}, "tipo": [3]},
+    "33": {"base_chance": 1.30, "dependencias": {}, "tipo": [3]},
+    "34": {"base_chance": 1.00, "dependencias": {}, "tipo": [3]},
+    "35": {"base_chance": 0.90, "dependencias": {}, "tipo": [3]},
+    "36": {"base_chance": 1.60, "dependencias": {"37": 16.00}, "tipo": [3, 10]},
+    "37": {"base_chance": 2.20, "dependencias": {"36": 14.00}, "tipo": [3, 10]},
+    "38": {"base_chance": 0.90, "dependencias": {}, "tipo": [3, 10]},
+    "39": {"base_chance": 1.00, "dependencias": {}, "tipo": [4]},
+    "40": {"base_chance": 0.80, "dependencias": {}, "tipo": [4]},
+    "41": {"base_chance": 2.00, "dependencias": {"42": 15.00}, "tipo": [4, 11]},
+    "42": {"base_chance": 0.90, "dependencias": {"41": 14.00}, "tipo": [4, 11]},
+    "43": {"base_chance": 1.30, "dependencias": {}, "tipo": [4]},
+    "44": {"base_chance": 1.00, "dependencias": {}, "tipo": [4]},
+    "45": {"base_chance": 1.00, "dependencias": {}, "tipo": [4, 12]},
+    "46": {"base_chance": 1.40, "dependencias": {"47": 15.00}, "tipo": [4, 13]},
+    "47": {"base_chance": 1.60, "dependencias": {"46": 15.00}, "tipo": [4, 13]},
+    "48": {"base_chance": 0.90, "dependencias": {}, "tipo": [4, 12]},
+    "49": {"base_chance": 2.00, "dependencias": {"50": 14.00}, "tipo": [4, 14]},
+    "50": {"base_chance": 0.90, "dependencias": {"49": 15.00}, "tipo": [4, 14]},
+}
+
+```
+
+### 📄 teste time/menu_principal.py
+```
+# menu_principal.py
+
+import os
+from config_tabelas import tabela_numeros
+from simulador import gerar_dados_simulados
+from relatorio_top_mensal import gerar_relatorio_top_mensal
+from relatorio_dependencias import gerar_relatorio_dependencias
+from relatorio_tamanho_listas import gerar_relatorio_tamanho_listas
+from relatorio_listas_por_intervalo import gerar_relatorio_listas_por_intervalo
+from relatorio_sorteios_pick import gerar_relatorio_sorteios_pick
+
+def menu():
+    while True:
+        print("\n===== MENU PRINCIPAL =====")
+        print("1. Gerar simulação")
+        print("2. Relatório top números mensais")
+        print("3. Relatório aproveitamento dependências")
+        print("4. Relatório tamanho das listas")
+        print("5. Relatório listas por intervalo")
+        print("6. Relatório sorteios por horário pick")
+        print("0. Sair")
+        opcao = input("Escolha uma opção: ").strip()
+
+        if opcao == "1":
+            gerar_dados_simulados(tabela_numeros)
+            print("Simulação concluída!")
+        elif opcao == "2":
+            arquivo = "dados_simulados_br.csv"
+            if not os.path.exists(arquivo):
+                print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
+            else:
+                gerar_relatorio_top_mensal(arquivo, tabela_numeros)
+            input("\nPressione ENTER para voltar...")
+        elif opcao == "3":
+            arquivo = "dados_simulados_br.csv"
+            if not os.path.exists(arquivo):
+                print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
+            else:
+                gerar_relatorio_dependencias(arquivo)
+            input("\nPressione ENTER para voltar...")
+        elif opcao == "4":
+            arquivo = "dados_simulados_br.csv"
+            if not os.path.exists(arquivo):
+                print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
+            else:
+                gerar_relatorio_tamanho_listas(arquivo)
+            input("\nPressione ENTER para voltar...")
+        elif opcao == "5":
+            arquivo = "dados_simulados_br.csv"
+            if not os.path.exists(arquivo):
+                print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
+            else:
+                gerar_relatorio_listas_por_intervalo(arquivo)
+            input("\nPressione ENTER para voltar...")
+        elif opcao == "6":
+            arquivo = "dados_simulados_br.csv"
+            if not os.path.exists(arquivo):
+                print("\nO arquivo 'dados_simulados_br.csv' não foi encontrado!")
+            else:
+                gerar_relatorio_sorteios_pick(arquivo)
+            input("\nPressione ENTER para voltar...")
+        elif opcao == "0":
+            print("Saindo...")
+            break
+        else:
+            print("Opção inválida. Tente novamente.")
+
+if __name__ == "__main__":
+    menu()
+
+```
+
+### 📄 teste time/relatorio_dependencias.py
+```
+# relatorio_dependencias.py
+
+import csv
+from collections import defaultdict
+from config_tabelas import tabela_numeros
+
+def gerar_relatorio_dependencias(arquivo_csv):
+    print("\n🔗 RELATÓRIO DE DEPENDÊNCIAS ENTRE NÚMEROS\n")
+
+    # --- Contadores ---
+    ativacoes = defaultdict(int)
+    total_ocorrencias = defaultdict(int)
+
+    # --- Lê o CSV e verifica dependências ativadas ---
+    with open(arquivo_csv, encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter=";")
+        for row in reader:
+            listas = row["Listas"]
+            if "Nenhum" in listas or not listas.strip():
+                continue
+
+            partes = listas.split(";")
+            for parte in partes:
+                numeros = [int(x) for x in parte.strip(" []").split(",") if x.strip().isdigit()]
+
+                for num in numeros:
+                    num_str = str(num)
+                    info = tabela_numeros.get(num_str, {})
+                    deps = info.get("dependencias", {})
+                    if not deps:
+                        continue
+
+                    total_ocorrencias[num] += 1
+                    # Verifica se algum número dependente também saiu
+                    for dep_num in deps.keys():
+                        if int(dep_num) in numeros:
+                            ativacoes[num] += 1
+                            break  # basta uma ativação por lista
+
+    # --- Exibir relatório ---
+    print(f"{'Número':<10} {'Ocorrências':<12} {'Ativações':<12} {'Aproveitamento':<15}")
+    print("-" * 55)
+
+    for num in sorted(total_ocorrencias.keys()):
+        total = total_ocorrencias[num]
+        ativ = ativacoes.get(num, 0)
+        aproveitamento = (ativ / total * 100) if total > 0 else 0
+        print(f"{num:<10} {total:<12} {ativ:<12} {aproveitamento:>10.2f}%")
+
+    print("\n📈 Total de números com dependências aproveitadas:", len(ativacoes))
+
+```
+
+### 📄 teste time/relatorio_listas_por_intervalo.py
+```
+# relatorio_listas_por_intervalo.py
+
+import csv
+from collections import Counter
+
+def gerar_relatorio_listas_por_intervalo(arquivo_csv):
+    print("\nRELATÓRIO DE QUANTIDADE DE LISTAS POR INTERVALO (10 min)\n")
+
+    contador_intervalos = Counter()
+    total_intervalos = 0
+
+    with open(arquivo_csv, encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter=";")
+        for row in reader:
+            listas_str = row["Listas"].strip()
+            # Ignorar linhas sem geração
+            if "Nenhum" in listas_str or "Sem geração" in listas_str or not listas_str:
+                continue
+
+            # Contar quantas listas existem neste intervalo
+            partes = [p for p in listas_str.split(";") if p.strip()]
+            qtd_listas = len(partes)
+
+            # Garantir que esteja dentro do limite 1–5
+            if 1 <= qtd_listas <= 5:
+                contador_intervalos[qtd_listas] += 1
+                total_intervalos += 1
+
+    if total_intervalos == 0:
+        print("Nenhum intervalo válido encontrado no arquivo.")
+        return
+
+    print(f"{'Qtd. de listas':<20} {'Qtd. de intervalos':<22} {'Percentual':<10}")
+    print("-" * 60)
+
+    for qtd_listas in range(1, 6):
+        qtd_intervalos = contador_intervalos[qtd_listas]
+        perc = (qtd_intervalos / total_intervalos) * 100
+        print(f"{qtd_listas:<20} {qtd_intervalos:<22} {perc:>7.2f}%")
+
+    print(f"\nTotal de intervalos analisados: {total_intervalos}")
+
+```
+
+### 📄 teste time/relatorio_sorteios_pick.py
+```
+# relatorio_sorteios_pick.py
+
+import csv
+from datetime import datetime
+from collections import Counter
+from config_tabelas import horarios_pick
+
+
+def gerar_relatorio_sorteios_pick(arquivo_csv):
+    print("\nRELATÓRIO DE SORTEIOS POR HORÁRIOS PICK\n")
+
+    contador_sorteados = Counter()
+    contador_totais = Counter()
+
+    # Converter horários_pick em faixas de tempo
+    faixas_horario = []
+    for faixa in horarios_pick.keys():
+        inicio, fim = faixa.split("-")
+        h_ini = datetime.strptime(inicio, "%H:%M").time()
+        h_fim = datetime.strptime(fim, "%H:%M").time()
+        faixas_horario.append((faixa, h_ini, h_fim))
+
+    # Ler arquivo CSV e contar intervalos sorteados e totais
+    with open(arquivo_csv, encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter=";")
+
+        for row in reader:
+            hora_txt = row["Hora"].strip()
+            listas_txt = row["Listas"].strip()
+
+            try:
+                hora_atual = datetime.strptime(hora_txt, "%H:%M").time()
+            except ValueError:
+                continue
+
+            for faixa, h_ini, h_fim in faixas_horario:
+                if h_ini <= hora_atual < h_fim:
+                    contador_totais[faixa] += 1  # conta todos os intervalos (com e sem sorteio)
+                    if "Nenhum" not in listas_txt and "Sem geração" not in listas_txt and listas_txt:
+                        contador_sorteados[faixa] += 1  # conta só os sorteados
+                    break
+
+    print(f"{'Faixa Horária':<15} {'Qtd. de Sorteios':<20} {'Qtd. de Intervalos':<20} {'Percentual':<10}")
+    print("-" * 70)
+
+    for faixa in horarios_pick.keys():
+        qtd_sorteios = contador_sorteados[faixa]
+        qtd_intervalos = contador_totais[faixa]
+        perc = (qtd_sorteios / qtd_intervalos * 100) if qtd_intervalos > 0 else 0
+        print(f"{faixa:<15} {qtd_sorteios:<20} {qtd_intervalos:<20} {perc:>7.2f}%")
+
+    total_sorteios = sum(contador_sorteados.values())
+    total_intervalos = sum(contador_totais.values())
+    perc_total = (total_sorteios / total_intervalos * 100) if total_intervalos > 0 else 0
+
+    print("-" * 70)
+    print(f"{'TOTAL':<15} {total_sorteios:<20} {total_intervalos:<20} {perc_total:>7.2f}%\n")
+
+```
+
+### 📄 teste time/relatorio_tamanho_listas.py
+```
+# relatorio_tamanho_listas.py
+
+import csv
+from collections import Counter
+
+def gerar_relatorio_tamanho_listas(arquivo_csv):
+    print("\nRELATÓRIO DE TAMANHO DAS LISTAS GERADAS\n")
+
+    contador_tamanhos = Counter()
+    total_listas = 0
+
+    # --- Lê o CSV e conta quantos números há em cada lista ---
+    with open(arquivo_csv, encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter=";")
+        for row in reader:
+            listas = row["Listas"]
+            if "Nenhum" in listas or not listas.strip():
+                continue
+
+            partes = listas.split(";")
+            for parte in partes:
+                numeros = [x.strip() for x in parte.strip(" []").split(",") if x.strip().isdigit()]
+                tamanho = len(numeros)
+                if tamanho > 0:
+                    contador_tamanhos[tamanho] += 1
+                    total_listas += 1
+
+    if total_listas == 0:
+        print("Nenhuma lista válida encontrada no arquivo.")
+        return
+
+    print(f"{'Qtd. de números':<20} {'Listas':<10} {'Percentual':<10}")
+    print("-" * 40)
+
+    for tamanho in sorted(contador_tamanhos.keys()):
+        qtd = contador_tamanhos[tamanho]
+        perc = (qtd / total_listas) * 100
+        print(f"{tamanho:<20} {qtd:<10} {perc:>7.2f}%")
+
+    print(f"\nTotal de listas analisadas: {total_listas}")
+
+```
+
+### 📄 teste time/relatorio_top_mensal.py
+```
+# relatorio_top_mensal.py
+
+import csv
+from collections import Counter, defaultdict
+from config_tabelas import class_tipo  # agora usamos a tabela combinada
+
+def gerar_relatorio_top_mensal(arquivo_csv, tabela_numeros):
+    sorteios_mensais = defaultdict(Counter)
+
+    # --- Lê o CSV e monta o contador por mês ---
+    with open(arquivo_csv, encoding="utf-8") as f:
+        reader = csv.DictReader(f, delimiter=";")
+        for row in reader:
+            data = row["Data"]
+            listas = row["Listas"]
+            if "Nenhum" in listas or not listas.strip():
+                continue
+
+            mes = int(data.split("/")[1])
+            partes = listas.split(";")
+            for parte in partes:
+                numeros = [int(x) for x in parte.strip(" []").split(",") if x.strip().isdigit()]
+                sorteios_mensais[mes].update(numeros)
+
+    # --- Gera relatório formatado ---
+    print("\nRANKING DE NÚMEROS POR MÊS\n")
+
+    for mes, contador in sorted(sorteios_mensais.items()):
+        total_mes = sum(contador.values())
+        print(f"\nMÊS {mes:02d} — Total de números sorteados: {total_mes}")
+
+        mais_frequentes = contador.most_common(10)
+
+        for i, (num, freq) in enumerate(mais_frequentes, start=1):
+            num_str = str(num)
+            info = tabela_numeros.get(num_str, {})
+            base = info.get("base_chance", 1.0)
+
+            # ---- Tipos atribuídos ao número (ex.: estação + evento) ----
+            tipos_ids = info.get("tipo", []) or info.get("classTipo", []) or []
+            # descrição completa dos tipos atribuídos (independente do mês)
+            if tipos_ids:
+                descricoes_tipos = [class_tipo.get(tid, {}).get("descricao", f"Tipo{tid}") for tid in tipos_ids]
+                desc_tipo = ", ".join(descricoes_tipos)
+            else:
+                desc_tipo = "N/A"
+
+            # ---- Cálculo do multiplicador somente para os tipos ATIVOS no mês ----
+            mult = 1.0
+            for tid in tipos_ids:
+                tipo_info = class_tipo.get(tid, {})
+                if mes in tipo_info.get("meses", []):
+                    mult *= tipo_info.get("mult", 1.0)
+
+            chance_calculada = base * mult
+            perc = (freq / total_mes * 100) if total_mes else 0
+
+            # ---- Formatações visuais (pt-BR: vírgula decimal) ----
+            perc_s = f"{perc:5.2f}".replace(".", ",")
+            ip, dp = perc_s.split(",")
+            ip = ip.rjust(2, " ")
+            perc_s = f"{ip},{dp}%"
+
+            base_s = f"{base:.2f}".replace(".", ",")
+            ip, dp = base_s.split(",")
+            ip = ip.rjust(2, " ")
+            base_s = f"{ip},{dp}"
+
+            chance_s = f"{chance_calculada:5.2f}".replace(".", ",")
+            ip, dp = chance_s.split(",")
+            chance_s = f"{ip.rjust(2, ' ')},{dp}"
+
+            mult_s = f"{mult:,.2f}".replace(",", "X").replace(".", ",").replace("X", ".").rjust(6, " ")
+
+            print(
+                f"{i:02d}º → Número {num:2d}: {freq:5d} vezes "
+                f"({perc_s}) | Base: {base_s} | "
+                f"Multiplicador Tipo: x{mult_s} → Chance final: {chance_s}  | "
+                f"Tipo: {desc_tipo}"
+            )
+
+```
+
+### 📄 teste time/simulador.py
+```
+# simulador.py
+
+import csv
+import random
+import time
+from datetime import datetime, timedelta
+from collections import Counter, defaultdict
+
+# importa todas as tabelas do arquivo separado
+from config_tabelas import (
+    horarios_pick,
+    class_tipo,
+    tabela_numeros,
+    distribuicao_listas,
+    distribuicao_numeros,
+)
+
+# ---- Funções utilitárias ----
+def get_chance_por_hora(hora):
+    for faixa, chance in horarios_pick.items():
+        inicio, fim = faixa.split("-")
+        h_ini = datetime.strptime(inicio, "%H:%M").time()
+        h_fim = datetime.strptime(fim, "%H:%M").time()
+        if h_ini <= hora < h_fim:
+            return chance
+    return 0.0
+
+
+def sortear_quantidade(probabilidades):
+    opcoes, pesos = list(probabilidades.keys()), list(probabilidades.values())
+    return random.choices(opcoes, weights=pesos, k=1)[0]
+
+
+def gerar_numeros_dinamicos(mes_atual, tabela_numeros):
+    """
+    Calcula as chances com base no mês atual, combinando multiplicadores
+    de todos os 'tipos' associados ao número (estações e eventos).
+    """
+    numeros_disponiveis = list(tabela_numeros.keys())
+    chances = {}
+
+    for n in numeros_disponiveis:
+        base = tabela_numeros[n]["base_chance"]
+        mult_total = 1.0
+
+        # percorre todos os tipos (estações/eventos)
+        for tipo_id in tabela_numeros[n]["tipo"]:
+            tipo_info = class_tipo.get(tipo_id, {})
+            if mes_atual in tipo_info.get("meses", []):
+                mult_total *= tipo_info.get("mult", 1.0)
+
+        chances[n] = base * mult_total
+
+    resultado = []
+    qtd = sortear_quantidade(distribuicao_numeros)
+
+    for _ in range(qtd):
+        total = sum(chances.values())
+        if total == 0:
+            break
+
+        pesos_norm = [chances[n] / total for n in numeros_disponiveis]
+        escolhido = random.choices(numeros_disponiveis, weights=pesos_norm, k=1)[0]
+        resultado.append(int(escolhido))
+
+        # Remove número escolhido e aplica dependências
+        numeros_disponiveis.remove(escolhido)
+        chances.pop(escolhido)
+
+        for num, novo_valor in tabela_numeros[escolhido]["dependencias"].items():
+            if num in chances:
+                chances[num] = novo_valor
+
+    return sorted(resultado)
+
+
+# ---- Função principal ----
+def gerar_dados_simulados(tabela_numeros):
+    arquivo_csv = "dados_simulados_br.csv"
+    with open(arquivo_csv, mode="w", newline="", encoding="utf-8") as f:
+        writer = csv.writer(f, delimiter=";")
+        writer.writerow(["Data", "Hora", "Chance", "Listas"])
+
+        sorteios_totais = Counter()
+        sorteios_mensais = defaultdict(Counter)
+        total_listas = 0
+
+        ano = 2000
+        passos_por_dia = 48
+
+        for mes in range(1, 13):
+            for dia in range(1, 29):
+                hora_simulada = datetime.strptime("08:00", "%H:%M")
+                for _ in range(passos_por_dia):
+                    hora_label = hora_simulada.strftime("%H:%M")
+                    chance_hora = get_chance_por_hora(hora_simulada.time())
+
+                    if random.random() < chance_hora:
+                        qtd_listas = sortear_quantidade(distribuicao_listas)
+                        listas = [gerar_numeros_dinamicos(mes, tabela_numeros) for _ in range(qtd_listas)]
+                        listas_formatadas = "; ".join(str(lst) for lst in listas)
+                        writer.writerow([f"{dia:02d}/{mes:02d}/{ano}", hora_label, f"{chance_hora*100:.0f}%", listas_formatadas])
+                        total_listas += qtd_listas
+                        for lst in listas:
+                            sorteios_totais.update(lst)
+                            sorteios_mensais[mes].update(lst)
+                    else:
+                        writer.writerow([f"{dia:02d}/{mes:02d}/{ano}", hora_label, f"{chance_hora*100:.0f}%", "Nenhum dado gerado"])
+
+                    hora_simulada += timedelta(minutes=10)
+                    if hora_simulada.hour == 12:
+                        hora_simulada = hora_simulada.replace(hour=14, minute=0)
+
+                time.sleep(0.01)
+
+    print("\n✅ Simulação concluída e salva em 'dados_simulados_br.csv'.")
+    return sorteios_mensais
+
+```

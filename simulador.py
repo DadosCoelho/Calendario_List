@@ -13,7 +13,9 @@ from config_tabelas import (
     tabela_numeros,
     distribuicao_listas,
     distribuicao_numeros,
+    config_calendario,
 )
+
 
 # ---- Funções utilitárias ----
 def get_chance_por_hora(hora):
@@ -85,33 +87,68 @@ def gerar_dados_simulados(tabela_numeros):
         sorteios_mensais = defaultdict(Counter)
         total_listas = 0
 
-        ano = 2000
-        passos_por_dia = 48
+        ano = config_calendario["ano_inicial"]
+        dias_mes = {d["mes"]: d["dias"] for d in config_calendario["dias_mes"]}
+
+        # converte feriados fixos para tuplas (mes, dia)
+        feriados_fixos = set()
+        for feriado in config_calendario["feriados"]:
+            dia, mes = map(int, feriado["data"].split("/"))
+            feriados_fixos.add((mes, dia))
+
+        # início do ano em segunda-feira
+        dia_semana_atual = 0  # 0 = segunda, 6 = domingo
+        dias_semana = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
 
         for mes in range(1, 13):
-            for dia in range(1, 29):
-                hora_simulada = datetime.strptime("08:00", "%H:%M")
-                for _ in range(passos_por_dia):
-                    hora_label = hora_simulada.strftime("%H:%M")
-                    chance_hora = get_chance_por_hora(hora_simulada.time())
+            for dia in range(1, dias_mes[mes] + 1):
+                nome_dia = dias_semana[dia_semana_atual]
 
-                    if random.random() < chance_hora:
-                        qtd_listas = sortear_quantidade(distribuicao_listas)
-                        listas = [gerar_numeros_dinamicos(mes, tabela_numeros) for _ in range(qtd_listas)]
-                        listas_formatadas = "; ".join(str(lst) for lst in listas)
-                        writer.writerow([f"{dia:02d}/{mes:02d}/{ano}", hora_label, f"{chance_hora*100:.0f}%", listas_formatadas])
-                        total_listas += qtd_listas
-                        for lst in listas:
-                            sorteios_totais.update(lst)
-                            sorteios_mensais[mes].update(lst)
-                    else:
-                        writer.writerow([f"{dia:02d}/{mes:02d}/{ano}", hora_label, f"{chance_hora*100:.0f}%", "Nenhum dado gerado"])
+                # pular domingos
+                if nome_dia in config_calendario["folga"]:
+                    dia_semana_atual = (dia_semana_atual + 1) % 7
+                    continue
 
-                    hora_simulada += timedelta(minutes=10)
-                    if hora_simulada.hour == 12:
-                        hora_simulada = hora_simulada.replace(hour=14, minute=0)
+                # pular feriados nacionais
+                if (mes, dia) in feriados_fixos:
+                    dia_semana_atual = (dia_semana_atual + 1) % 7
+                    continue
 
-                time.sleep(0.01)
+                # define horários conforme tipo de dia
+                if nome_dia in config_calendario["dia_util"]:
+                    periodos = config_calendario["horarios_dia_util"]
+                elif nome_dia in config_calendario["meio_periodo"]:
+                    periodos = config_calendario["horarios_meio_periodo"]
+                else:
+                    periodos = []
+
+                # gera os sorteios conforme os períodos
+                for inicio, fim in periodos:
+                    hora_simulada = datetime.strptime(inicio, "%H:%M")
+                    hora_final = datetime.strptime(fim, "%H:%M")
+
+                    while hora_simulada < hora_final:
+                        hora_label = hora_simulada.strftime("%H:%M")
+                        chance_hora = get_chance_por_hora(hora_simulada.time())
+
+                        if random.random() < chance_hora:
+                            qtd_listas = sortear_quantidade(distribuicao_listas)
+                            listas = [gerar_numeros_dinamicos(mes, tabela_numeros) for _ in range(qtd_listas)]
+                            listas_formatadas = "; ".join(str(lst) for lst in listas)
+                            writer.writerow([f"{dia:02d}/{mes:02d}/{ano}", hora_label, f"{chance_hora*100:.0f}%", listas_formatadas])
+                            total_listas += qtd_listas
+                            for lst in listas:
+                                sorteios_totais.update(lst)
+                                sorteios_mensais[mes].update(lst)
+                        else:
+                            writer.writerow([f"{dia:02d}/{mes:02d}/{ano}", hora_label, f"{chance_hora*100:.0f}%", "Nenhum dado gerado"])
+
+                        hora_simulada += timedelta(minutes=10)
+
+                # avança para o próximo dia da semana
+                dia_semana_atual = (dia_semana_atual + 1) % 7
+
+                time.sleep(0.001)
 
     print("\n✅ Simulação concluída e salva em 'dados_simulados_br.csv'.")
     return sorteios_mensais

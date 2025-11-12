@@ -1,5 +1,48 @@
 # config_tabelas.py
 
+# ---- Configuração de calendário e horários ----
+config_calendario = {
+    "ano_inicial": 2000,  # ano de início da simulação
+    "dia_semana_inicial": "segunda-feira",  # força o ano a começar numa segunda-feira
+
+    # quantidade de dias em cada mês (ano não bissexto)
+    "dias_mes": [
+        {"mes": 1, "dias": 31},
+        {"mes": 2, "dias": 28},
+        {"mes": 3, "dias": 31},
+        {"mes": 4, "dias": 30},
+        {"mes": 5, "dias": 31},
+        {"mes": 6, "dias": 30},
+        {"mes": 7, "dias": 31},
+        {"mes": 8, "dias": 31},
+        {"mes": 9, "dias": 30},
+        {"mes": 10, "dias": 31},
+        {"mes": 11, "dias": 30},
+        {"mes": 12, "dias": 31},
+    ],
+
+    # definição dos dias da semana
+    "dia_util": ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira"],
+    "meio_periodo": ["sábado"],
+    "folga": ["domingo"],
+
+    # horários padrão de funcionamento
+    "horarios_dia_util": [("08:00", "12:00"), ("14:00", "18:00")],
+    "horarios_meio_periodo": [("08:00", "12:00")],
+
+    # feriados nacionais fixos
+    "feriados": [
+        {"data": "01/01", "descricao": "Confraternização Universal"},
+        {"data": "21/04", "descricao": "Tiradentes"},
+        {"data": "01/05", "descricao": "Dia do Trabalhador"},
+        {"data": "07/09", "descricao": "Independência do Brasil"},
+        {"data": "12/10", "descricao": "Nossa Senhora Aparecida"},
+        {"data": "02/11", "descricao": "Finados"},
+        {"data": "15/11", "descricao": "Proclamação da República"},
+        {"data": "25/12", "descricao": "Natal"},
+    ]
+}
+
 # ---- Tabelas de configuração ----
 horarios_pick = {
     "08:00-09:00": 0.20,
