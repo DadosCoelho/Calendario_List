@@ -53,9 +53,62 @@ horarios_pick = {
     "17:00-18:00": 0.65
 }
 
-# ---- Distribuições ----
-distribuicao_listas = {1: 0.50, 2: 0.20, 3: 0.15, 4: 0.10, 5: 0.05}
-distribuicao_numeros = {1: 0.40, 2: 0.25, 3: 0.15, 4: 0.12, 5: 0.08}
+# ---- Parâmetros gerais de distribuição ----
+
+distribuicao_lista_max = 50   # você altera para qualquer valor
+distribuicao_numeros_max = 40  # outro exemplo
+
+# Pesos relativos (somatório deve ser 1.0)
+# Isto você pode alterar à vontade!
+faixas_percentuais_listas = [0.50, 0.20, 0.15, 0.10, 0.05]
+faixas_percentuais_numeros = [0.40, 0.25, 0.15, 0.12, 0.08]
+
+def gerar_distribuicao_dinamica(maximo, percentuais):
+    """
+    Gera faixas proporcionais ao max especificado,
+    garantindo que NÃO exista faixa extra residual.
+    A última faixa é ajustada automaticamente para fechar no máximo.
+    """
+    distribuicao = {}
+    inicio = 1
+    total_percentual = sum(percentuais)
+
+    # normaliza percentuais se necessário (somar exatamente 1.0)
+    percentuais = [p / total_percentual for p in percentuais]
+
+    for i, p in enumerate(percentuais):
+        # sempre arredonda tamanho mínimo para 1
+        tamanho = int(maximo * p)
+
+        # se for a última faixa → absorve qualquer diferença restante
+        if i == len(percentuais) - 1:
+            fim = maximo
+
+        else:
+            fim = inicio + tamanho - 1
+            if fim >= maximo:
+                fim = maximo - (len(percentuais) - i - 1)
+
+        # Segurança: impedir faixas invertidas
+        if fim < inicio:
+            fim = inicio
+
+        distribuicao[(inicio, fim)] = p
+        inicio = fim + 1
+
+    return distribuicao
+
+# ---- Criação das distribuições dinâmicas ----
+
+distribuicao_listas = gerar_distribuicao_dinamica(
+    distribuicao_lista_max,
+    faixas_percentuais_listas
+)
+
+distribuicao_numeros = gerar_distribuicao_dinamica(
+    distribuicao_numeros_max,
+    faixas_percentuais_numeros
+)
 
 # ---- Tipos combinados (estações e eventos) ----
 class_tipo = {

@@ -29,8 +29,17 @@ def get_chance_por_hora(hora):
 
 
 def sortear_quantidade(probabilidades):
-    opcoes, pesos = list(probabilidades.keys()), list(probabilidades.values())
-    return random.choices(opcoes, weights=pesos, k=1)[0]
+    faixas = list(probabilidades.keys())
+    pesos = list(probabilidades.values())
+
+    faixa_escolhida = random.choices(faixas, weights=pesos, k=1)[0]
+
+    # faixa vira (inicio,fim)
+    inicio, fim = faixa_escolhida
+
+    # agora retorna um número dentro da faixa
+    return random.randint(inicio, fim)
+
 
 
 def gerar_numeros_dinamicos(mes_atual, tabela_numeros):
