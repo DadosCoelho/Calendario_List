@@ -5,7 +5,7 @@ from collections import defaultdict
 from config_tabelas import tabela_numeros
 
 def gerar_relatorio_dependencias(arquivo_csv):
-    print("\n🔗 RELATÓRIO DE DEPENDÊNCIAS ENTRE NÚMEROS\n")
+    print("\nRELATÓRIO DE DEPENDÊNCIAS ENTRE NÚMEROS\n")
 
     # --- Contadores ---
     ativacoes = defaultdict(int)
@@ -47,4 +47,4 @@ def gerar_relatorio_dependencias(arquivo_csv):
         aproveitamento = (ativ / total * 100) if total > 0 else 0
         print(f"{num:<10} {total:<12} {ativ:<12} {aproveitamento:>10.2f}%")
 
-    print("\n📈 Total de números com dependências aproveitadas:", len(ativacoes))
+    print("\nTotal de números com dependências aproveitadas:", len(ativacoes))

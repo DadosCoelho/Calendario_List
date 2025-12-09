@@ -1,3 +1,9 @@
 ~$Pasta1.xlsx
 Pasta1.xlsx
 dados_simulados_br.csv
+
+// pastas
+
+build/
+dist/
+venv/

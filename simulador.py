@@ -3,8 +3,13 @@
 import csv
 import random
 import time
+import sys
 from datetime import datetime, timedelta
 from collections import Counter, defaultdict
+
+# Força UTF-8 no stdout para evitar erros de encoding
+if sys.stdout.encoding != 'utf-8':
+    sys.stdout.reconfigure(encoding='utf-8')
 
 # importa todas as tabelas do arquivo separado
 from config_tabelas import (
@@ -107,7 +112,7 @@ def gerar_dados_simulados(tabela_numeros):
 
         # início do ano em segunda-feira
         dia_semana_atual = 0  # 0 = segunda, 6 = domingo
-        dias_semana = ["segunda-feira", "terça-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sábado", "domingo"]
+        dias_semana = ["segunda-feira", "terca-feira", "quarta-feira", "quinta-feira", "sexta-feira", "sabado", "domingo"]
 
         for mes in range(1, 13):
             for dia in range(1, dias_mes[mes] + 1):
@@ -159,5 +164,5 @@ def gerar_dados_simulados(tabela_numeros):
 
                 time.sleep(0.001)
 
-    print("\n✅ Simulação concluída e salva em 'dados_simulados_br.csv'.")
+    print("\n[OK] Simulacao concluida e salva em 'dados_simulados_br.csv'.")
     return sorteios_mensais
